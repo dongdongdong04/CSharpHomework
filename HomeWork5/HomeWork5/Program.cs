@@ -62,17 +62,19 @@ namespace HomeWork5
 
         public override string ToString()
         {
-            string str = "订单编号：" + orderId + "\n" +
-                "下单时间：" + orderTime + "\n";
-            str += "-----------------------------------\n";
-            foreach(OrderItem oi in orderList)
+            string str = $"----------------- 订 单 {orderId} ------------------\n";
+            str += "订单编号：" + orderId + "\n" +
+                   "下单时间：" + orderTime + "\n";
+            str += "--------------------------------------------\n";
+            str += "商品编号\t商品    单价    数目    小计\n";
+            foreach (OrderItem oi in orderList)
             {
                 str += oi;
             }
-            str += "共    计：" + TotalPrise() + "\n";
-            str += "-----------------------------------\n" +
-                customer + "\n";
-            str += "-----------------------------------\n";
+            str += "\n" + "共    计                                " + TotalPrise() + "\n";
+            str += "--------------------------------------------\n";
+            str += customer + "\n";
+            str += "--------------------------------------------\n";
             return str;
         }
 
@@ -101,9 +103,7 @@ namespace HomeWork5
 
         public override string ToString()
         {
-            return goodsDetail + "\n" + 
-                "订购数目：" + goodsQuantity + "\t" +
-                "\t" + goodsQuantity * goodsDetail.perPrise + "\n";
+            return goodsDetail + "\t" + goodsQuantity + "\t" + goodsQuantity * goodsDetail.perPrise + "\n";
         }
 
         public override bool Equals(object obj)
@@ -136,25 +136,32 @@ namespace HomeWork5
         // 通过订单id删除一个订单
         public void DeleteOrder(int id)
         {
+            var order = from s in myOrderList
+                        where s.orderId == id
+                        select s;
+            if (order.Any()) myOrderList.Remove(order.First());
+            else throw new Exception("不存在此订单编号，删除失败");
+            /*   foreach内不能进行修改操作
             foreach(Order s in myOrderList)
             {
                 if (s.orderId == id) myOrderList.Remove(s);
                 if (s == myOrderList[myOrderList.ToArray().Length - 1] && s.orderId != id)
                     throw new Exception("不存在此订单编号，删除失败");
             }
-
+            */
         }
 
         // 删除一个人的所有订单
-        public void DeleteCustomerOrder(string customer)
+        public void DeleteCustomerOrder(string Customer)
         {
             var order = from s in myOrderList
-                        where s.customer.name == customer
+                        where s.customer.name == Customer
                         select s;
-            if (!order.Any()) throw new Exception("订单列表没有此客户的订单，删除失败");
-            else
-                foreach(Order s in myOrderList)
-                    if (s.customer.name == customer) myOrderList.Remove(s);
+            if (order.Any()) myOrderList = myOrderList.Where(x => x.customer.name != Customer).ToList();
+            else throw new Exception("订单列表没有此客户的订单，删除失败");
+            //else
+            //foreach(Order s in myOrderList)
+            //if (s.customer.name == customer) myOrderList.Remove(s);
         }
 
 
@@ -162,30 +169,41 @@ namespace HomeWork5
         // 修改客户信息
         public void UpdateOrder(int id, Customer newCustomer)
         {
+            int len = myOrderList.ToArray().Length;
             var order = from s in myOrderList
                         where s.orderId == id
                         select s;
             if (!order.Any()) throw new Exception("订单编号不存在，修改失败");
             else
-                foreach (Order s in myOrderList)
-                    if (s.orderId == id) s.customer = newCustomer;
+                for (int i = 0; i < len; i++)
+                    if (myOrderList[i].orderId == id) myOrderList[i].customer = newCustomer;
+                //foreach (Order s in myOrderList)
+                //    if (s.orderId == id) s.customer = newCustomer;
         }
 
         // 修改订单明细
         public void UpdateOrder(int id, List<OrderItem> newOL)
         {
+            int len = myOrderList.ToArray().Length;
             var order = from s in myOrderList
                         where s.orderId == id
                         select s;
             if (!order.Any()) throw new Exception("订单编号不存在，修改失败");
             else
-                foreach(Order s in myOrderList)
-                    if(s.orderId == id)
+            {
+                Order newOr = order.First();
+                newOr.orderList = newOL;
+                myOrderList = myOrderList.Where(x => x.orderId != id).ToList();
+                myOrderList.Add(newOr);
+            }
+                /*
+                for(int i = 0; i < len; i++)
+                    if (myOrderList[i].orderId == id)
                     {
-                        int len = s.orderList.ToArray().Length;
-                        for(int i = 0; i < len; i++)
-                            s.orderList[i] = newOL[i];
-                    }
+                        int len2 = myOrderList[i].orderList.ToArray().Length;
+                        for (int j = 0; j < len2; j++)
+                            myOrderList[j].orderList[j] = newOL[j];
+                    }*/
         }
 
 
@@ -196,7 +214,8 @@ namespace HomeWork5
             var order = from s in myOrderList
                         where s.orderId == orderId
                         select s;
-            Order od = new Order(order.First().orderId, order.First().orderTime, order.First().customer);
+            Order od = order.First();
+            //Order od = new Order(order.First().orderId, order.First().orderTime, order.First().customer);
             Console.WriteLine(od);
             return od;
         }
@@ -235,6 +254,14 @@ namespace HomeWork5
                 Console.WriteLine(s);
             return od;
         }
+
+        // 查询全部订单
+        public List<Order> FindOrder()
+        {
+            foreach(Order s in myOrderList)
+                Console.WriteLine(s);
+            return myOrderList;
+        }
     }
 
     class Goods
@@ -252,9 +279,7 @@ namespace HomeWork5
 
         public override string ToString()
         {
-            return "商品编号：" + id + "\n" +
-                "商 品 名：" + name + "\n" +
-                "商品单价：" + perPrise ;
+            return id + "\t" + name + "\t" + perPrise ;
         }
     }
     
@@ -293,35 +318,81 @@ namespace HomeWork5
             Customer Mike = new Customer("Mike", "Los Angeles");
             Customer ONo = new Customer("小野", "Tokyo");
 
-            //测试
+
             OrderService os = new OrderService();
+
+            Console.WriteLine("----------------接受订单----------------");  //接受订单
 
             Order order1 = new Order(1, DateTime.Now, Sen);
             order1.AddItem(pen, 2);
             order1.AddItem(carbonPen, 10);
             order1.AddItem(ruler, 1);
             os.AddOrder(order1);   // 添加订单
-            Thread.Sleep(683);
 
             Order order2 = new Order(2, DateTime.Now, ONo);
             order2.AddItem(pencil, 10);
             order2.AddItem(eraser, 5);
             order2.AddItem(ruler, 2);
             os.AddOrder(order2);   // 添加订单
-            Thread.Sleep(566);
 
             Order order3 = new Order(3, DateTime.Now, Mike);
-            order2.AddItem(carbonPen, 20);
-            order2.AddItem(correctionTape, 3);
+            order3.AddItem(carbonPen, 20);
+            order3.AddItem(correctionTape, 3);
             os.AddOrder(order3);   // 添加订单
-            Thread.Sleep(933);
 
-            Console.WriteLine("--------查看所有订单--------");
-            os.FindOrderById(1);
-            os.FindOrderById(2);
-            os.FindOrderById(3);
+            Order order4 = new Order(4, DateTime.Now, Sen);
+            order4.AddItem(pen, 30);
+            order4.AddItem(ruler, 20);
+            order4.AddItem(pencil, 50);
+            os.AddOrder(order4);   // 添加订单
+
+            os.FindOrder();
             Console.ReadLine();
+            Console.Clear();
 
+            // 测试查找方法
+            Console.WriteLine("-------------森先生的订单--------------");
+            os.FindOrderByCustomer("森先生");
+            Console.ReadLine();
+            Console.Clear();
+            Console.WriteLine("-------------有尺子的订单--------------");
+            os.FindOrderByGoods("尺子");
+
+            // 测试删除方法
+            Console.WriteLine("-------------删除2号订单--------------");
+            os.DeleteOrder(2);
+            //os.DeleteOrder(5); 会抛出异常，不存在此订单
+            Console.ReadLine();
+            Console.Clear();
+            Console.WriteLine("-------------删除2号订单后--------------");
+            os.FindOrder();
+            Console.WriteLine("--------------删除森先生的订单--------------");
+            os.DeleteCustomerOrder("森先生");
+            //os.DeleteCustomerOrder("Sen"); 抛出异常 不存在此客户
+            Console.ReadLine();
+            Console.Clear();
+            Console.WriteLine("--------------删除森先生的订单后--------------");
+            os.FindOrder();
+
+            // 测试修改方法
+            Console.WriteLine("--------------修改3号订单客户信息--------------");
+            os.UpdateOrder(3, Yang);
+            //os.UpdateOrder(2, Yang);  抛出异常 不存在此订单
+            Console.ReadLine();
+            Console.Clear();
+            Console.WriteLine("--------------修改3号订单客户信息后--------------");
+            os.FindOrder();
+            Console.WriteLine("--------------修改3号订单明细--------------");
+            List<OrderItem> ol = new List<OrderItem>();
+            os.UpdateOrder(3, ol);
+            //os.UpdateOrder(2,ol);
+            Console.ReadLine();
+            Console.Clear();
+            Console.WriteLine("--------------修改3号订单明细后--------------");
+            os.FindOrder();
+            
+
+            Console.ReadLine();
         }
     }
 }
