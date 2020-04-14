@@ -14,27 +14,28 @@ namespace Homework8
     public partial class OrderListEdit : Form
     {
         public OrderItem orderItem { get; set; }
+
         public OrderListEdit()
         {
             InitializeComponent();
         }
 
-        public OrderListEdit(OrderItem orderItem)
+        public OrderListEdit(OrderItem orderItem) : this()
         {
             this.orderItem = orderItem;
             this.itemBindingSource.DataSource = orderItem;
             goodsBindingSource.Add(new Goods("1", "苹果", 5.5));
             goodsBindingSource.Add(new Goods("2", "梨", 8.5));
         }
+        
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             itemBindingSource.ResetBindings(false);
-        }
-
-        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
         }
     }
 }
