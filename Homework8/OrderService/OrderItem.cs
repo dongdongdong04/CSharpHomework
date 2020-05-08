@@ -34,7 +34,7 @@ namespace OrderServiceAPP
         public override bool Equals(object obj)
         {
             var item = obj as OrderItem;
-            return item != null && item.goodsItem.id == goodsItem.id;
+            return item != null && goodsName == item.goodsName;
         }
 
         public override int GetHashCode()

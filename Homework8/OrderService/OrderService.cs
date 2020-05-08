@@ -23,8 +23,9 @@ namespace OrderServiceAPP
             var order = from s in myOrderList
                         where s.orderId == myOrder.orderId
                         select s;
-            if (!order.Any()) myOrderList.Add(myOrder);
-            else throw new ApplicationException("订单编号重复，添加失败");
+            if (order.Any())
+                throw new ApplicationException($"添加错误：订单号{myOrder.orderId} 已经存在!");
+            myOrderList.Add(myOrder);
         }
 
         // 删除订单
@@ -36,16 +37,6 @@ namespace OrderServiceAPP
                         select s;
             if (order.Any()) myOrderList.Remove(order.First());
             else throw new Exception("不存在此订单编号，删除失败");
-        }
-
-        // 删除一个人的所有订单
-        public void DeleteOrder(string Customer)
-        {
-            var order = from s in myOrderList
-                        where s.customer.name == Customer
-                        select s;
-            if (order.Any()) myOrderList = myOrderList.Where(x => x.customer.name != Customer).ToList();
-            else throw new Exception("订单列表没有此客户的订单，删除失败");
         }
 
         // 修改订单
@@ -62,71 +53,25 @@ namespace OrderServiceAPP
         // 通过ID查询订单
         public Order FindOrder(int orderId)
         {
-            var order = from s in myOrderList
-                        where s.orderId == orderId
-                        select s;
-            if (!order.Any())
-            {
-                Console.WriteLine("订单不存在！");
-                return null;
-            }
-            else
-            {
-                Order od = order.First();
-                Console.WriteLine(od);
-                return od;
-            }
+            return myOrderList.Where(o => o.orderId == orderId).FirstOrDefault();
         }
 
         // 通过客户姓名查询此客户所有订单
         public List<Order> FindOrder(string customerName)
         {
-            var order = from s in myOrderList
-                        where s.customer.name == customerName
-                        orderby s.totalPrice
-                        select s;
-            if (!order.Any())
-            {
-                Console.WriteLine("不存在此客户的订单！");
-                return null;
-            }
-            else
-            {
-                List<Order> od = new List<Order>();
-                od = order.ToList();
-                foreach (var s in order)
-                    Console.WriteLine(s);
-                return od;
-            }
+            return myOrderList
+                .Where(order => order.customerName == customerName)
+                .OrderBy(o => o.totalPrice)
+                .ToList();
         }
 
         // 通过商品名称查询包含此商品的所有订单
         public List<Order> FindOrderByGoods(string goodsName)
         {
-            int len1 = myOrderList.ToArray().Length;
-            List<Order> od = new List<Order>();
-            for (int i = 0; i < len1; i++)
-            {
-                int len2 = myOrderList[i].orderList.ToArray().Length;
-                for (int j = 0; j < len2; j++)
-                    if (myOrderList[i].orderList[j].goodsItem.name == goodsName)
-                        od.Add(myOrderList[i]);
-            }
-            var query = from s in od
-                        orderby s.totalPrice
-                        select s;
-            if (!query.Any())
-            {
-                Console.WriteLine("不存在包含此商品的订单！");
-                return null;
-            }
-            else
-            {
-                od = query.ToList();
-                foreach (Order s in od)
-                    Console.WriteLine(s);
-                return od;
-            }
+            var query = myOrderList
+                .Where(order => order.orderList.Exists(item => item.goodsName == goodsName))
+                .OrderBy(o => o.totalPrice);
+            return query.ToList();
         }
 
         // 查询全部订单

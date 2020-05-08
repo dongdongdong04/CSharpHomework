@@ -31,15 +31,15 @@
             this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.itemBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.goodsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.button1 = new System.Windows.Forms.Button();
-            this.itemBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tableLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.goodsBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.itemBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.goodsBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -60,17 +60,22 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1202, 250);
-            this.tableLayoutPanel1.TabIndex = 0;
+            this.tableLayoutPanel1.TabIndex = 10;
             this.tableLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
             // 
             // textBox2
             // 
+            this.textBox2.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.itemBindingSource, "goodsQuantity", true));
             this.textBox2.Dock = System.Windows.Forms.DockStyle.Left;
             this.textBox2.Location = new System.Drawing.Point(337, 165);
             this.textBox2.Margin = new System.Windows.Forms.Padding(7, 40, 7, 7);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(795, 38);
-            this.textBox2.TabIndex = 3;
+            this.textBox2.TabIndex = 10;
+            // 
+            // itemBindingSource
+            // 
+            this.itemBindingSource.DataSource = typeof(OrderServiceAPP.OrderItem);
             // 
             // label1
             // 
@@ -80,7 +85,7 @@
             this.label1.Margin = new System.Windows.Forms.Padding(7, 48, 7, 7);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(66, 67);
-            this.label1.TabIndex = 0;
+            this.label1.TabIndex = 1;
             this.label1.Text = "货物";
             // 
             // label2
@@ -91,11 +96,12 @@
             this.label2.Margin = new System.Windows.Forms.Padding(7, 48, 7, 7);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 67);
-            this.label2.TabIndex = 1;
+            this.label2.TabIndex = 13;
             this.label2.Text = "数量";
             // 
             // comboBox1
             // 
+            this.comboBox1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedItem", this.itemBindingSource, "goodsItem", true));
             this.comboBox1.DataSource = this.goodsBindingSource;
             this.comboBox1.DisplayMember = "name";
             this.comboBox1.FormattingEnabled = true;
@@ -103,7 +109,7 @@
             this.comboBox1.Margin = new System.Windows.Forms.Padding(7, 40, 7, 7);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(799, 35);
-            this.comboBox1.TabIndex = 4;
+            this.comboBox1.TabIndex = 2;
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // goodsBindingSource
@@ -116,13 +122,9 @@
             this.button1.Location = new System.Drawing.Point(475, 326);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(304, 59);
-            this.button1.TabIndex = 1;
+            this.button1.TabIndex = 11;
             this.button1.Text = "确  定";
             this.button1.UseVisualStyleBackColor = true;
-            // 
-            // itemBindingSource
-            // 
-            this.itemBindingSource.DataSource = typeof(OrderServiceAPP.OrderItem);
             // 
             // OrderListEdit
             // 
@@ -135,8 +137,8 @@
             this.Text = "修改订单明细";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.goodsBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.itemBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.goodsBindingSource)).EndInit();
             this.ResumeLayout(false);
 
         }

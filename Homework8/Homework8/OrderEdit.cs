@@ -58,7 +58,8 @@ namespace Homework8
         
         private void btnSaveList_Click(object sender, EventArgs e)
         {
-            //  这里还要加上订单合法性验证
+            //int txtId = int.Parse(txtID.Text);
+            //if(txtId == )
             this.Close();
         }
 

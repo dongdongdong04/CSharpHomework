@@ -35,6 +35,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.txtID = new System.Windows.Forms.TextBox();
+            this.orderBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.cmbCustomer = new System.Windows.Forms.ComboBox();
             this.customerBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.lblTime = new System.Windows.Forms.Label();
@@ -51,16 +52,15 @@
             this.perPriceDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.totalPriceDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.listBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.orderBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.goodsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.orderBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.customerBindingSource)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOrderList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.orderBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.goodsBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
@@ -135,6 +135,7 @@
             // txtID
             // 
             this.txtID.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.orderBindingSource, "orderId", true));
             this.txtID.Dock = System.Windows.Forms.DockStyle.Left;
             this.txtID.Location = new System.Drawing.Point(351, 17);
             this.txtID.Margin = new System.Windows.Forms.Padding(7, 17, 7, 7);
@@ -142,8 +143,13 @@
             this.txtID.Size = new System.Drawing.Size(826, 38);
             this.txtID.TabIndex = 9;
             // 
+            // orderBindingSource
+            // 
+            this.orderBindingSource.DataSource = typeof(OrderServiceAPP.Order);
+            // 
             // cmbCustomer
             // 
+            this.cmbCustomer.DataBindings.Add(new System.Windows.Forms.Binding("SelectedItem", this.orderBindingSource, "customer", true));
             this.cmbCustomer.DataSource = this.customerBindingSource;
             this.cmbCustomer.DisplayMember = "name";
             this.cmbCustomer.Dock = System.Windows.Forms.DockStyle.Left;
@@ -163,6 +169,7 @@
             // lblTime
             // 
             this.lblTime.AutoSize = true;
+            this.lblTime.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.orderBindingSource, "orderTime", true));
             this.lblTime.Dock = System.Windows.Forms.DockStyle.Left;
             this.lblTime.Location = new System.Drawing.Point(351, 170);
             this.lblTime.Margin = new System.Windows.Forms.Padding(7, 26, 7, 7);
@@ -302,10 +309,6 @@
             this.listBindingSource.DataMember = "orderList";
             this.listBindingSource.DataSource = this.orderBindingSource;
             // 
-            // orderBindingSource
-            // 
-            this.orderBindingSource.DataSource = typeof(OrderServiceAPP.Order);
-            // 
             // goodsBindingSource
             // 
             this.goodsBindingSource.DataSource = typeof(OrderServiceAPP.Goods);
@@ -322,12 +325,12 @@
             this.groupBox1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.orderBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.customerBindingSource)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvOrderList)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.orderBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.goodsBindingSource)).EndInit();
             this.ResumeLayout(false);
 

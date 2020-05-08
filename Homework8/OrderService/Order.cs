@@ -36,15 +36,8 @@ namespace OrderServiceAPP
         // 对订单明细的添加和删除
         public void AddItem(OrderItem orderItem)
         {
-            if (orderList.Contains(orderItem)) // 若List中已存在该类货物，则认为数量叠加
-            {
-                for(int i = 0; i < orderList.ToArray().Length; i++)
-                    if (orderList[i].Equals(orderItem))  
-                    {
-                        orderList[i].goodsQuantity += orderItem.goodsQuantity;
-                        break;
-                    }
-            }
+            if (orderList.Contains(orderItem)) // 若List中已存在该类货物，抛出异常
+                throw new ApplicationException($"添加错误：订单项{orderItem.goodsName} 已经存在!");
             else orderList.Add(orderItem);     // 否则添加新明细
         }
 
